@@ -1,0 +1,351 @@
+@import '@fontsource-variable/nunito';
+@import '@fontsource-variable/fredoka';
+@import 'tailwindcss';
+@import 'react-day-picker/style.css';
+
+/* ==========================================================================
+   ALOHA — Design tokens
+   Fuente única de verdad para color, tipografía, radios, sombras y animación.
+   Tropical Kawaii + Pastel Productivity + Digital Scrapbook
+   ========================================================================== */
+@theme {
+  /* Paleta base */
+  --color-mint: #b7dec9;
+  --color-turquoise: #a9dcd8;
+  --color-coral: #f3a9a5;
+  --color-blush: #f8d6dc;
+  --color-cream: #fff8e9;
+  --color-vanilla: #f5e5a9;
+  --color-lavender: #dcd3f0;
+  --color-ink: #514a45;
+
+  /* Derivados (superficies y texto secundario) */
+  --color-paper: #fffdf6;
+  --color-ink-soft: #6b635c;
+  --color-line: #eadfcb;
+
+  /* Tonos profundos: texto/íconos de acento con contraste AA sobre crema */
+  --color-coral-deep: #b4524d;
+  --color-mint-deep: #2f6b52;
+  --color-turquoise-deep: #2c7673;
+  --color-lavender-deep: #6a5aa5;
+  --color-vanilla-deep: #8a6d1a;
+
+  /* Tipografía */
+  --font-sans: 'Nunito Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fredoka Variable', 'Nunito Variable', ui-sans-serif, sans-serif;
+
+  /* Radios y sombras */
+  --radius-card: 1.75rem;
+  --radius-pill: 999px;
+  --shadow-soft: 0 8px 28px -12px rgb(81 74 69 / 0.28);
+  --shadow-pop: 0 14px 34px -14px rgb(81 74 69 / 0.38);
+  --shadow-inset: inset 0 -3px 0 rgb(81 74 69 / 0.08);
+
+  /* Animaciones */
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-sway: sway 6s ease-in-out infinite;
+  --animate-pop: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-fade-up: fade-up 0.45s ease-out both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-twinkle: twinkle 3.2s ease-in-out infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+    50% { transform: translateY(-8px) rotate(var(--r, 0deg)); }
+  }
+  @keyframes sway {
+    0%, 100% { transform: rotate(-2.5deg); }
+    50% { transform: rotate(2.5deg); }
+  }
+  @keyframes pop {
+    0% { opacity: 0; transform: scale(0.92) translateY(6px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes fade-up {
+    0% { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.55; transform: scale(0.9) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.1) rotate(12deg); }
+  }
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background-color: var(--color-cream);
+    background-image:
+      radial-gradient(900px 520px at 0% 0%, rgb(183 222 201 / 0.5), transparent 62%),
+      radial-gradient(820px 520px at 100% 8%, rgb(248 214 220 / 0.6), transparent 62%),
+      radial-gradient(760px 540px at 55% 100%, rgb(220 211 240 / 0.5), transparent 62%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+  }
+
+  ::selection {
+    background: var(--color-vanilla);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-lavender-deep);
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+  }
+
+  /* Scroll suave y discreto */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-mint) transparent;
+  }
+}
+
+/* ==========================================================================
+   Componentes de estilo reutilizables (scrapbook)
+   ========================================================================== */
+@layer components {
+  /* Tarjeta base: papel crema, borde suave y sombra */
+  .card {
+    position: relative;
+    background: var(--color-paper);
+    border: 2px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Tarjeta "scrapbook": costura punteada interior */
+  .card-stitch::after {
+    content: '';
+    position: absolute;
+    inset: 7px;
+    border: 2px dashed rgb(81 74 69 / 0.12);
+    border-radius: calc(var(--radius-card) - 8px);
+    pointer-events: none;
+  }
+
+  .card-hover {
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-4px) rotate(-0.4deg);
+    box-shadow: var(--shadow-pop);
+  }
+
+  /* Cinta washi decorativa */
+  .washi {
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    width: 84px;
+    height: 24px;
+    transform: translateX(-50%) rotate(var(--tape-rot, -3deg));
+    background: repeating-linear-gradient(
+      -45deg,
+      rgb(255 255 255 / 0.5) 0 6px,
+      transparent 6px 12px
+    ), var(--tape, var(--color-vanilla));
+    opacity: 0.92;
+    border-radius: 3px;
+    box-shadow: 0 2px 4px -2px rgb(81 74 69 / 0.3);
+    pointer-events: none;
+  }
+
+  /* Papel cuadriculado / rayado para el cuaderno */
+  .lined-paper {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0 31px,
+      rgb(169 220 216 / 0.45) 31px 32px
+    );
+  }
+
+  /* Skeleton */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      rgb(234 223 203 / 0.55) 25%,
+      rgb(255 253 246 / 0.95) 50%,
+      rgb(234 223 203 / 0.55) 75%
+    );
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
+    border-radius: 1rem;
+  }
+
+  /* Markdown renderizado (contenido enriquecido) */
+  .markdown {
+    line-height: 1.75;
+    overflow-wrap: anywhere;
+  }
+  .markdown > * + * { margin-top: 0.85em; }
+  .markdown h1, .markdown h2, .markdown h3 {
+    font-family: var(--font-display);
+    margin-top: 1.4em;
+    line-height: 1.25;
+  }
+  .markdown h1 { font-size: 1.6rem; }
+  .markdown h2 { font-size: 1.35rem; }
+  .markdown h3 { font-size: 1.15rem; }
+  .markdown ul, .markdown ol { padding-left: 1.4rem; }
+  .markdown ul { list-style: '🌺  '; }
+  .markdown ol { list-style: decimal; }
+  .markdown li + li { margin-top: 0.3em; }
+  .markdown a {
+    color: var(--color-turquoise-deep);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 700;
+  }
+  .markdown blockquote {
+    border-left: 5px solid var(--color-coral);
+    background: rgb(248 214 220 / 0.35);
+    padding: 0.6rem 1rem;
+    border-radius: 0 1rem 1rem 0;
+    color: var(--color-ink-soft);
+  }
+  .markdown code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9em;
+    background: rgb(220 211 240 / 0.55);
+    padding: 0.12em 0.4em;
+    border-radius: 0.5rem;
+  }
+  .markdown pre {
+    background: #3f3a36;
+    color: #fff8e9;
+    padding: 1rem 1.1rem;
+    border-radius: 1.1rem;
+    overflow-x: auto;
+  }
+  .markdown pre code { background: none; padding: 0; color: inherit; }
+  .markdown hr { border: 0; border-top: 2px dashed var(--color-line); margin: 1.5rem 0; }
+  .markdown table { border-collapse: collapse; width: 100%; }
+  .markdown th, .markdown td { border: 2px solid var(--color-line); padding: 0.4rem 0.7rem; text-align: left; }
+  .markdown th { background: rgb(183 222 201 / 0.4); }
+}
+
+/* ==========================================================================
+   Calendario (react-day-picker) — tema ALOHA vía variables rdp
+   ========================================================================== */
+.rdp-root {
+  --rdp-accent-color: var(--color-coral-deep);
+  --rdp-accent-background-color: var(--color-blush);
+  --rdp-day-height: 46px;
+  --rdp-day-width: 46px;
+  --rdp-day_button-height: 42px;
+  --rdp-day_button-width: 42px;
+  --rdp-day_button-border-radius: 16px;
+  --rdp-selected-border: 2px solid var(--color-coral-deep);
+  --rdp-today-color: var(--color-ink); /* el día actual se distingue por el borde punteado */
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+.rdp-root .rdp-month_caption {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  text-transform: capitalize;
+}
+.rdp-root .rdp-weekday {
+  text-transform: capitalize;
+  color: var(--color-ink-soft);
+  font-weight: 700;
+  opacity: 1; /* react-day-picker aplica 0.6 por defecto y rompe el contraste AA */
+}
+.rdp-root .rdp-day_button:hover:not(:disabled) {
+  background: var(--color-mint);
+}
+.rdp-root .rdp-selected .rdp-day_button {
+  background: var(--color-coral);
+  color: var(--color-ink);
+  font-weight: 800;
+}
+.rdp-root .rdp-today:not(.rdp-selected) .rdp-day_button {
+  border: 2px dashed var(--color-turquoise-deep);
+}
+/* Día con aprendizajes: punto vainilla/menta debajo del número */
+.rdp-root .has-learning .rdp-day_button {
+  position: relative;
+  background: rgb(183 222 201 / 0.55);
+}
+.rdp-root .has-learning .rdp-day_button::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: var(--color-mint-deep);
+}
+.rdp-root .has-learning.rdp-selected .rdp-day_button::after {
+  background: var(--color-ink);
+}
+
+/* Compacto (dashboard) */
+.rdp-compact.rdp-root {
+  --rdp-day-height: 36px;
+  --rdp-day-width: 36px;
+  --rdp-day_button-height: 34px;
+  --rdp-day_button-width: 34px;
+  --rdp-day_button-border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   Movimiento reducido: respeta la preferencia del sistema y del perfil
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+html[data-reduce-motion='true'] *,
+html[data-reduce-motion='true'] *::before,
+html[data-reduce-motion='true'] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
+/* Enlace "saltar al contenido" (accesibilidad) */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  font-weight: 700;
+}
+.skip-link:focus { top: 1rem; }

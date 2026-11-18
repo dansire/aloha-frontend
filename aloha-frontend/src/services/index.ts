@@ -1,0 +1,6 @@
+export { authService } from './authService'
+export { categoryService } from './categoryService'
+export { goalService } from './goalService'
+export { learningService } from './learningService'
+export { statsService } from './statsService'
+export { tagService } from './tagService'
